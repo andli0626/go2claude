@@ -1,0 +1,865 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Go2Claude · 在 Finder 里点一下就进 Claude</title>
+<meta name="description" content="Go2Claude 是一个 macOS 小工具：给 Finder 加一个工具栏按钮，点一下就在当前目录打开 Terminal 并进入 Claude CLI。零外部依赖，MIT 开源。">
+<meta name="theme-color" content="#0B1020">
+<meta name="robots" content="index,follow">
+<meta property="og:title" content="Go2Claude · 在 Finder 里点一下就进 Claude">
+<meta property="og:description" content="一个 Finder 工具栏按钮，把当前目录直接交给 Claude CLI。">
+<meta property="og:image" content="assets/app-icon-512.png">
+<link rel="icon" href="assets/app-icon-128.png">
+<link rel="apple-touch-icon" href="assets/app-icon-256.png">
+<style>
+/* ===== 设计变量 ===== */
+:root{
+  color-scheme: light;
+  --ink:#0B1020;
+  --ink-soft:#141B33;
+  --paper:#ffffff;
+  --band:#F5F7FB;
+  --band-strong:#EDF1F8;
+  --line:#E3E9F2;
+  --line-soft:#EFF3F9;
+  --text:#111729;
+  --muted:#58617C;
+  --subtle:#8A93A9;
+  --teal:#18C296;
+  --blue:#4C6BFF;
+  --violet:#9A5CF4;
+  --grad:linear-gradient(96deg,#25D6A4 0%,#4C6BFF 52%,#9A5CF4 100%);
+  --radius:16px;
+  --shadow-sm:0 8px 24px rgba(16,24,48,.08);
+  --shadow-lg:0 30px 80px rgba(8,14,32,.28);
+  --max:1180px;
+  --hdr-h:66px;
+  --font:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+  --mono:ui-monospace,SFMono-Regular,"SF Mono",Menlo,Consolas,"Liberation Mono",monospace;
+}
+
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:calc(var(--hdr-h) + 22px)}
+body{
+  margin:0;min-width:320px;
+  font-family:var(--font);font-size:16px;line-height:1.65;
+  color:var(--text);background:var(--paper);
+  -webkit-font-smoothing:antialiased;
+}
+img{max-width:100%;display:block}
+a{color:inherit;text-decoration:none}
+h1,h2,h3{margin:0;letter-spacing:-.01em}
+p{margin:0}
+ul{margin:0;padding:0;list-style:none}
+button{font:inherit;border:0;background:none;cursor:pointer;color:inherit}
+code{font-family:var(--mono);font-size:.92em}
+:focus-visible{outline:2px solid #4C6BFF;outline-offset:3px;border-radius:6px}
+
+.wrap{width:100%;max-width:var(--max);margin:0 auto;padding:0 24px}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
+
+/* ===== 顶部导航 ===== */
+.site-header{
+  position:fixed;left:0;right:0;top:0;z-index:40;
+  height:var(--hdr-h);
+  display:flex;align-items:center;
+  color:#fff;
+  background:rgba(11,16,32,.82);
+  border-bottom:1px solid rgba(255,255,255,.06);
+  transition:background .3s ease,color .3s ease,border-color .3s ease,box-shadow .3s ease;
+}
+.site-header.is-solid{
+  color:var(--text);
+  background:rgba(255,255,255,.92);
+  backdrop-filter:blur(16px) saturate(140%);
+  -webkit-backdrop-filter:blur(16px) saturate(140%);
+  border-bottom-color:var(--line);
+  box-shadow:0 6px 24px rgba(16,24,48,.06);
+}
+.header-inner{display:flex;align-items:center;gap:18px;width:100%;max-width:var(--max);margin:0 auto;padding:0 24px}
+.brand{display:flex;align-items:center;gap:10px;font-weight:650;letter-spacing:.01em}
+.brand img{width:28px;height:28px;border-radius:7px}
+.brand .ver{
+  font-family:var(--mono);font-size:11px;line-height:1;letter-spacing:.02em;
+  padding:4px 6px;border-radius:5px;
+  border:1px solid rgba(255,255,255,.22);
+  color:rgba(255,255,255,.72);
+}
+.site-header.is-solid .brand .ver{border-color:var(--line);color:var(--subtle)}
+.site-nav{display:flex;align-items:center;gap:4px;margin-left:auto}
+.site-nav a{padding:8px 12px;border-radius:8px;font-size:14.5px;color:rgba(255,255,255,.78);transition:color .2s,background .2s}
+.site-nav a:hover{color:#fff;background:rgba(255,255,255,.1)}
+.site-header.is-solid .site-nav a{color:var(--muted)}
+.site-header.is-solid .site-nav a:hover{color:var(--text);background:var(--band)}
+.header-actions{display:flex;align-items:center;gap:10px}
+.btn-mini{
+  display:inline-flex;align-items:center;gap:7px;
+  padding:9px 14px;border-radius:99px;font-size:14px;font-weight:600;
+  background:#fff;color:#0B1020;box-shadow:0 4px 14px rgba(8,14,32,.18);
+  transition:transform .18s ease,box-shadow .18s ease;
+}
+.btn-mini:hover{transform:translateY(-1px);box-shadow:0 8px 22px rgba(8,14,32,.24)}
+.menu-btn{display:none;width:38px;height:38px;border-radius:9px;align-items:center;justify-content:center;border:1px solid rgba(255,255,255,.2)}
+.site-header.is-solid .menu-btn{border-color:var(--line)}
+.menu-btn span{display:block;width:16px;height:2px;background:currentColor;box-shadow:0 5px 0 currentColor,0 -5px 0 currentColor}
+
+/* ===== 首屏 ===== */
+.hero{
+  position:relative;overflow:hidden;color:#fff;
+  background:
+    radial-gradient(760px 420px at 12% -6%,rgba(37,214,164,.22),transparent 62%),
+    radial-gradient(820px 460px at 88% 4%,rgba(154,92,244,.24),transparent 64%),
+    radial-gradient(600px 400px at 50% 108%,rgba(76,107,255,.20),transparent 70%),
+    var(--ink);
+  padding:calc(72px + var(--hdr-h)) 0 0;
+}
+.hero::after{
+  content:"";position:absolute;inset:0;pointer-events:none;opacity:.5;
+  background-image:radial-gradient(rgba(255,255,255,.16) 1px,transparent 1px);
+  background-size:26px 26px;
+  mask-image:linear-gradient(180deg,rgba(0,0,0,.55),transparent 62%);
+  -webkit-mask-image:linear-gradient(180deg,rgba(0,0,0,.55),transparent 62%);
+}
+.hero-inner{
+  position:relative;z-index:1;
+  display:grid;grid-template-columns:1.02fr .98fr;gap:56px;align-items:center;
+  padding-bottom:64px;
+}
+.eyebrow{
+  display:inline-flex;align-items:center;gap:8px;
+  font-size:13px;letter-spacing:.02em;color:rgba(255,255,255,.68);
+  padding:6px 12px 6px 8px;border-radius:99px;
+  border:1px solid rgba(255,255,255,.16);background:rgba(255,255,255,.06);
+}
+.eyebrow i{width:7px;height:7px;border-radius:50%;background:var(--teal);box-shadow:0 0 10px rgba(37,214,164,.9)}
+.hero h1{
+  margin:22px 0 0;font-size:clamp(36px,4.4vw,58px);line-height:1.12;font-weight:720;
+  letter-spacing:-.025em;
+}
+.hero h1 em{
+  font-style:normal;
+  background:var(--grad);-webkit-background-clip:text;background-clip:text;
+  -webkit-text-fill-color:transparent;color:transparent;
+}
+.hero-lead{
+  margin-top:20px;max-width:33em;
+  font-size:16.5px;line-height:1.75;color:rgba(255,255,255,.74);
+}
+.hero-lead strong{color:#fff;font-weight:600}
+.hero-actions{display:flex;flex-wrap:wrap;gap:12px;margin-top:30px}
+.btn{
+  display:inline-flex;align-items:center;gap:9px;
+  padding:13px 22px;border-radius:11px;font-size:15px;font-weight:600;
+  transition:transform .18s ease,box-shadow .18s ease,background .18s ease,border-color .18s ease;
+}
+.btn-primary{background:#fff;color:#0B1020;box-shadow:0 10px 30px rgba(8,14,32,.3)}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 16px 38px rgba(8,14,32,.36)}
+.btn-ghost{color:#fff;border:1px solid rgba(255,255,255,.24);background:rgba(255,255,255,.04)}
+.btn-ghost:hover{background:rgba(255,255,255,.12);border-color:rgba(255,255,255,.4)}
+.btn svg{width:16px;height:16px;flex:none}
+.hero-chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:26px}
+.chip{
+  font-size:12.5px;color:rgba(255,255,255,.72);
+  border:1px solid rgba(255,255,255,.14);border-radius:7px;
+  padding:5px 10px;background:rgba(255,255,255,.05);
+}
+.chip code{color:#fff;font-size:12px}
+
+.hero-visual{position:relative}
+.shot{
+  position:relative;border-radius:14px;overflow:hidden;
+  border:1px solid rgba(255,255,255,.12);
+  box-shadow:var(--shadow-lg);
+  background:#fff;
+  transform:translateY(0);
+}
+.shot img{width:100%;height:auto}
+.shot::after{content:"";position:absolute;inset:0;box-shadow:inset 0 1px 0 rgba(255,255,255,.5);border-radius:14px;pointer-events:none}
+.shot-glow{
+  position:absolute;inset:-26px -18px -34px;z-index:-1;border-radius:24px;
+  background:radial-gradient(60% 60% at 50% 40%,rgba(76,107,255,.30),rgba(154,92,244,.12) 55%,transparent 78%);
+  filter:blur(18px);
+}
+.float-tag{
+  position:absolute;right:-6px;bottom:-22px;
+  display:flex;align-items:center;gap:9px;
+  padding:9px 13px;border-radius:11px;
+  background:rgba(255,255,255,.96);color:var(--text);
+  box-shadow:0 18px 44px rgba(8,14,32,.34);
+  font-size:12.5px;line-height:1.3;
+}
+.float-tag img{width:24px;height:24px;border-radius:6px}
+.float-tag b{display:block;font-size:12.5px}
+.float-tag span{color:var(--subtle);font-size:11.5px}
+
+/* 首屏底部数据条 */
+.hero-stats{border-top:1px solid rgba(255,255,255,.1);position:relative;z-index:1}
+.stats{display:grid;grid-template-columns:repeat(4,1fr)}
+.stat{padding:22px 24px;border-left:1px solid rgba(255,255,255,.1)}
+.stat:first-child{border-left:0}
+.stat b{display:block;font-size:26px;line-height:1.1;font-weight:700;letter-spacing:-.02em}
+.stat b i{font-style:normal;font-size:14px;font-weight:500;color:rgba(255,255,255,.55);margin-left:4px}
+.stat span{display:block;margin-top:6px;font-size:13px;color:rgba(255,255,255,.56)}
+
+/* ===== 通用区块 ===== */
+.section{padding:88px 0}
+.section.band{background:var(--band);border-top:1px solid var(--line-soft);border-bottom:1px solid var(--line-soft)}
+.section-head{max-width:720px;margin-bottom:44px}
+.kicker{
+  display:inline-block;font-family:var(--mono);font-size:12px;letter-spacing:.14em;
+  text-transform:uppercase;color:var(--blue);margin-bottom:14px;
+}
+.section-head h2{font-size:clamp(26px,3vw,38px);line-height:1.24;font-weight:700;letter-spacing:-.02em}
+.section-head p{margin-top:14px;color:var(--muted);font-size:16px;line-height:1.75}
+
+/* ===== 功能 ===== */
+.feature-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px}
+.card{
+  background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);
+  padding:28px 28px 24px;
+  transition:transform .22s ease,box-shadow .22s ease,border-color .22s ease;
+}
+.card:hover{transform:translateY(-3px);box-shadow:var(--shadow-sm);border-color:#D2DBEA}
+.f-icon{
+  width:44px;height:44px;border-radius:12px;display:grid;place-items:center;
+  background:linear-gradient(140deg,rgba(37,214,164,.14),rgba(76,107,255,.14) 60%,rgba(154,92,244,.16));
+  border:1px solid rgba(76,107,255,.16);color:#22307A;
+}
+.f-icon svg{width:21px;height:21px;stroke:currentColor;fill:none;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+.card h3{margin-top:18px;font-size:19.5px;font-weight:680}
+.card p{margin-top:10px;color:var(--muted);font-size:14.8px;line-height:1.72}
+.card ul{margin-top:16px;display:grid;gap:8px}
+.card li{display:flex;gap:9px;font-size:13.6px;color:var(--muted);line-height:1.6}
+.card li::before{
+  content:"";flex:none;width:6px;height:6px;margin-top:9px;border-radius:50%;
+  background:linear-gradient(120deg,var(--teal),var(--blue));
+}
+.card code.inline{background:var(--band);border:1px solid var(--line-soft);border-radius:5px;padding:1px 6px;color:#233;font-size:12.6px}
+
+/* ===== 流程 ===== */
+.flow-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;position:relative}
+.step{
+  position:relative;background:var(--paper);border:1px solid var(--line);border-radius:14px;padding:24px 22px 22px;
+}
+.step .n{
+  display:inline-grid;place-items:center;width:30px;height:30px;border-radius:9px;
+  font-family:var(--mono);font-size:13px;font-weight:600;color:#fff;
+  background:linear-gradient(135deg,#25D6A4,#4C6BFF 60%,#9A5CF4);
+}
+.step h3{margin-top:14px;font-size:17px;font-weight:660}
+.step p{margin-top:8px;font-size:13.8px;color:var(--muted);line-height:1.65}
+.step .tagline{margin-top:14px;font-family:var(--mono);font-size:11.5px;color:var(--subtle)}
+.flow-note{
+  margin-top:22px;display:flex;gap:10px;align-items:flex-start;
+  font-size:14px;color:var(--muted);
+}
+.flow-note svg{flex:none;width:17px;height:17px;margin-top:3px;stroke:var(--teal);fill:none;stroke-width:2}
+
+.terminal{
+  margin-top:34px;border-radius:14px;overflow:hidden;
+  background:#0B1020;border:1px solid rgba(255,255,255,.1);
+  box-shadow:0 24px 60px rgba(8,14,32,.24);
+}
+.terminal .bar{
+  display:flex;align-items:center;gap:8px;padding:11px 14px;
+  background:rgba(255,255,255,.05);border-bottom:1px solid rgba(255,255,255,.08);
+}
+.terminal .dot{width:10px;height:10px;border-radius:50%}
+.terminal .dot.r{background:#FF5F57}.terminal .dot.y{background:#FEBC2E}.terminal .dot.g{background:#28C840}
+.terminal .bar span{margin-left:8px;font-family:var(--mono);font-size:11.5px;color:rgba(255,255,255,.5)}
+.terminal pre{margin:0;max-width:100%;padding:20px 22px 24px;font-family:var(--mono);font-size:13.5px;line-height:1.85;color:#E8ECF8;overflow-x:auto}
+.terminal .c-dim{color:rgba(232,236,248,.45)}
+.terminal .c-teal{color:#25D6A4}
+.terminal .c-blue{color:#7C93FF}
+.terminal .c-violet{color:#B98CF8}
+.copy-btn{
+  margin-left:auto;display:inline-flex;align-items:center;gap:6px;
+  padding:5px 9px;border-radius:6px;font-size:11.5px;font-family:var(--mono);
+  color:rgba(255,255,255,.72);border:1px solid rgba(255,255,255,.18);
+  transition:background .2s,color .2s;
+}
+.copy-btn:hover{background:rgba(255,255,255,.12);color:#fff}
+.copy-btn svg{width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2}
+
+/* ===== 上手 ===== */
+.start-grid{display:grid;grid-template-columns:1.12fr .88fr;gap:36px;align-items:start}
+.steps{display:grid;gap:16px}
+.ostep{
+  display:grid;grid-template-columns:auto 1fr;gap:18px;
+  background:var(--paper);border:1px solid var(--line);border-radius:14px;padding:22px 24px;
+}
+.ostep .big{
+  width:38px;height:38px;border-radius:50%;display:grid;place-items:center;
+  font-weight:700;font-size:16px;color:#0B1020;
+  background:linear-gradient(135deg,rgba(37,214,164,.28),rgba(76,107,255,.24));
+  border:1px solid rgba(76,107,255,.2);
+}
+.ostep h3{font-size:17px;font-weight:650}
+.ostep p{margin-top:6px;font-size:14px;color:var(--muted);line-height:1.68}
+.ostep .cmd{
+  margin-top:12px;display:inline-block;font-family:var(--mono);font-size:12.8px;
+  background:var(--band);border:1px solid var(--line-soft);border-radius:6px;padding:5px 9px;color:#2B3550;
+}
+.callout{
+  background:var(--paper);border:1px solid var(--line);border-left:3px solid var(--teal);
+  border-radius:12px;padding:20px 22px;
+}
+.callout h3{font-size:16px;font-weight:650;display:flex;align-items:center;gap:8px}
+.callout h3 svg{width:17px;height:17px;stroke:var(--teal);fill:none;stroke-width:2}
+.callout p{margin-top:8px;font-size:14px;color:var(--muted);line-height:1.7}
+.callout .kv{margin-top:16px;display:grid;gap:10px}
+.callout .kv div{display:flex;justify-content:space-between;gap:14px;font-size:13.4px;color:var(--muted);border-top:1px dashed var(--line);padding-top:10px}
+.callout .kv b{color:var(--text);font-weight:600}
+
+/* ===== 下载 ===== */
+.section.dark{background:var(--ink);color:#fff;position:relative;overflow:hidden}
+.section.dark::before{
+  content:"";position:absolute;inset:0;pointer-events:none;
+  background:radial-gradient(700px 380px at 78% 0%,rgba(154,92,244,.18),transparent 66%),
+             radial-gradient(620px 360px at 12% 20%,rgba(37,214,164,.14),transparent 68%);
+}
+.section.dark .section-head{position:relative}
+.section.dark .section-head h2{color:#fff}
+.section.dark .section-head p{color:rgba(255,255,255,.66)}
+.section.dark .kicker{color:#7FE7CB}
+.dl-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;position:relative}
+.dl{
+  display:flex;flex-direction:column;
+  background:rgba(255,255,255,.055);border:1px solid rgba(255,255,255,.12);
+  border-radius:15px;padding:26px 24px;
+  backdrop-filter:blur(6px);
+  transition:transform .2s ease,border-color .2s ease,background .2s ease;
+}
+.dl:hover{transform:translateY(-3px);border-color:rgba(255,255,255,.28);background:rgba(255,255,255,.08)}
+.dl .kind{font-family:var(--mono);font-size:11.5px;letter-spacing:.1em;text-transform:uppercase;color:#7FE7CB}
+.dl h3{margin-top:10px;font-size:19px;font-weight:660}
+.dl p{margin-top:10px;font-size:13.6px;color:rgba(255,255,255,.64);line-height:1.7}
+.dl .meta{margin-top:16px;font-family:var(--mono);font-size:11.8px;overflow-wrap:anywhere;color:rgba(255,255,255,.46);line-height:1.8}
+.dl .go{
+  margin-top:auto;padding-top:20px;
+  display:inline-flex;align-items:center;gap:8px;font-size:14px;font-weight:600;color:#fff;
+}
+.dl .go svg{width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:2}
+.dl .go:hover{color:#7FE7CB}
+
+.notice{
+  margin-top:26px;position:relative;
+  font-size:13.6px;color:rgba(255,255,255,.55);line-height:1.8;
+}
+.notice b{color:rgba(255,255,255,.82);font-weight:600}
+
+/* ===== FAQ ===== */
+.faq{display:grid;gap:10px;max-width:900px}
+details{
+  background:var(--paper);border:1px solid var(--line);border-radius:12px;
+  padding:0 20px;overflow:hidden;
+  transition:border-color .2s ease,box-shadow .2s ease;
+}
+details[open]{border-color:#CFD9E9;box-shadow:var(--shadow-sm)}
+details summary{
+  list-style:none;cursor:pointer;padding:18px 0;
+  display:flex;align-items:center;gap:14px;
+  font-size:15.6px;font-weight:600;
+}
+details summary::-webkit-details-marker{display:none}
+details summary .plus{
+  margin-left:auto;flex:none;width:22px;height:22px;border-radius:50%;
+  display:grid;place-items:center;border:1px solid var(--line);color:var(--muted);
+  font-size:14px;line-height:1;transition:transform .2s ease,background .2s,color .2s;
+}
+details[open] summary .plus{transform:rotate(45deg);background:var(--ink);border-color:var(--ink);color:#fff}
+details .answer{padding:0 0 20px;color:var(--muted);font-size:14.4px;line-height:1.78;max-width:70ch}
+details .answer code{background:var(--band);border:1px solid var(--line-soft);border-radius:5px;padding:1px 5px;color:#2B3550}
+
+/* ===== 页脚 ===== */
+.site-footer{background:var(--ink);color:rgba(255,255,255,.55);padding:56px 0 44px;font-size:13.4px;line-height:1.8}
+.footer-top{display:flex;flex-wrap:wrap;gap:24px;align-items:center;justify-content:space-between;margin-bottom:28px}
+.footer-brand{display:flex;align-items:center;gap:10px;color:#fff;font-weight:620}
+.footer-brand img{width:26px;height:26px;border-radius:6px}
+.footer-links{display:flex;gap:22px;flex-wrap:wrap}
+.footer-links a:hover{color:#fff}
+.footer-legal{max-width:86ch;color:rgba(255,255,255,.42);font-size:12.4px;line-height:1.85}
+.copyright{margin-top:24px;padding-top:20px;border-top:1px solid rgba(255,255,255,.1);display:flex;flex-wrap:wrap;gap:12px;justify-content:space-between;font-size:12.4px;color:rgba(255,255,255,.38)}
+
+/* ===== 响应式 ===== */
+@media (max-width:1024px){
+  .hero-inner{grid-template-columns:1fr;gap:44px}
+  .hero-visual{max-width:620px}
+  .start-grid{grid-template-columns:1fr}
+  .dl-grid{grid-template-columns:1fr 1fr}
+}
+@media (max-width:860px){
+  .site-nav{display:none}
+  .menu-btn{display:flex}
+  .feature-grid{grid-template-columns:1fr}
+  .flow-grid{grid-template-columns:1fr 1fr}
+  .stats{grid-template-columns:1fr 1fr}
+  .stat:nth-child(odd){border-left:0}
+  .dl-grid{grid-template-columns:1fr}
+  .section{padding:64px 0}
+  .hero{padding-top:calc(44px + var(--hdr-h))}
+  .hero h1{font-size:clamp(32px,7vw,42px)}
+}
+@media (max-width:560px){
+  .wrap,.header-inner{padding:0 18px}
+  .flow-grid{grid-template-columns:1fr}
+  .hero-actions .btn{width:100%;justify-content:center}
+  .float-tag{display:none}
+  .btn-mini{display:none}
+  .stat{flex:1}
+}
+
+@media (max-width:420px){
+  .stats{grid-template-columns:1fr}
+  .stat{border-left:0;border-top:1px solid rgba(255,255,255,.1);padding:16px 2px}
+  .stat:first-child{border-top:0}
+}
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  *{animation:none !important;transition:none !important}
+}
+</style>
+</head>
+<body>
+<a class="sr-only" href="#main">跳到正文</a>
+
+<header class="site-header" id="siteHeader">
+  <div class="header-inner">
+    <a class="brand" href="#top" aria-label="Go2Claude 首页">
+      <img src="assets/app-icon-128.png" alt="" width="28" height="28">
+      <span>Go2Claude</span>
+      <span class="ver">v1.2.3</span>
+    </a>
+    <nav class="site-nav" aria-label="页面导航">
+      <a href="#features">功能</a>
+      <a href="#flow">工作方式</a>
+      <a href="#start">安装到 Finder</a>
+      <a href="#download">下载</a>
+      <a href="#faq">常见问题</a>
+    </nav>
+    <div class="header-actions">
+      <a class="btn-mini" href="#download">
+        <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12m0 0 4-4m-4 4-4-4M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg>
+        下载安装包
+      </a>
+      <button class="menu-btn" type="button" id="menuBtn" aria-label="打开导航菜单" aria-expanded="false"><span></span></button>
+    </div>
+  </div>
+</header>
+
+<main id="main">
+  <!-- ===== 首屏 ===== -->
+  <section class="hero" id="top">
+    <div class="wrap">
+      <div class="hero-inner">
+        <div class="hero-copy">
+          <span class="eyebrow"><i></i>macOS 13+ · MIT 开源 · 零外部依赖</span>
+          <h1>在 Finder 里，<br><em>点一下就进 Claude</em></h1>
+          <p class="hero-lead">
+            Go2Claude 给 Finder 加一个工具栏按钮。点它，就在<strong>当前窗口的目录</strong>里打开 Terminal，
+            直接进入 Claude CLI——不用复制路径，不用敲 <code>cd</code>，不用来回切窗口。
+          </p>
+          <div class="hero-actions">
+            <a class="btn btn-primary" href="#download">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12m0 0 4-4m-4 4-4-4M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg>
+              下载安装包
+            </a>
+            <a class="btn btn-ghost" href="#flow">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12h4l2-6 4 12 2-6h6"/></svg>
+              看它怎么工作
+            </a>
+          </div>
+          <div class="hero-chips">
+            <span class="chip">默认命令 <code>cd %PATH% &amp;&amp; claude</code></span>
+            <span class="chip">模板可自定义</span>
+            <span class="chip">点完即退出</span>
+          </div>
+        </div>
+
+        <div class="hero-visual">
+          <div class="shot-glow" aria-hidden="true"></div>
+          <div class="shot">
+            <img src="assets/settings.png" alt="Go2Claude 设置窗口：命令模板、恢复默认、切换到开发模式、立即打开 Claude 等操作" width="1440" height="963">
+          </div>
+          <div class="float-tag" aria-hidden="true">
+            <img src="assets/app-icon-128.png" alt="">
+            <div>
+              <b>Go2Claude Toolbar</b>
+              <span>按住 ⌘ 拖进 Finder 工具栏</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="hero-stats">
+      <div class="wrap" style="padding:0">
+        <div class="stats">
+          <div class="stat"><b>1<i>次点击</i></b><span>从 Finder 直达终端</span></div>
+          <div class="stat"><b>2<i>个 App</i></b><span>主程序 + 工具栏助手</span></div>
+          <div class="stat"><b>0<i>外部依赖</i></b><span>纯 Apple 框架构建</span></div>
+          <div class="stat"><b>32<i>个单测</i></b><span>覆盖核心启动链路</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== 功能 ===== -->
+  <section class="section" id="features">
+    <div class="wrap">
+      <div class="section-head">
+        <span class="kicker">Features</span>
+        <h2>四个小设计，省掉一堆重复动作</h2>
+        <p>它的目标很窄：把「打开 Finder → 定位项目 → 开终端 → 进目录 → 敲 claude」压成一次点击。其余一概不做。</p>
+      </div>
+
+      <div class="feature-grid">
+        <article class="card">
+          <span class="f-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M9 13h6"/></svg>
+          </span>
+          <h3>一键定位当前目录</h3>
+          <p>通过 AppleScript 读取最前面的 Finder 窗口路径，<code class="inline">%PATH%</code> 在启动前替换成真实路径——空格、中文目录名都照常工作。</p>
+          <ul>
+            <li>不用手动 <code class="inline">pwd</code>，窗口切到哪就进哪</li>
+            <li>路径转义交给模板渲染层处理</li>
+            <li>没有占位符时直接报错，不会误改目录</li>
+          </ul>
+        </article>
+
+        <article class="card">
+          <span class="f-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24"><path d="m5 8 4 4-4 4"/><path d="M13 16h6"/><rect x="2" y="3" width="20" height="18" rx="2"/><path d="M2 7h20"/></svg>
+          </span>
+          <h3>命令模板由你决定</h3>
+          <p>模板存在本地偏好里，改一行就换行为。默认带跳过权限确认，开发时可以只切目录。</p>
+          <ul>
+            <li>默认：<code class="inline">cd %PATH% &amp;&amp; claude --dangerously-skip-permissions</code></li>
+            <li>开发模式：<code class="inline">cd %PATH% &amp;&amp; claude</code></li>
+            <li>也能换成任意 CLI 或本地脚本</li>
+          </ul>
+        </article>
+
+        <article class="card">
+          <span class="f-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24"><rect x="3" y="4" width="7" height="7" rx="2"/><rect x="14" y="4" width="7" height="7" rx="2"/><rect x="3" y="13" width="7" height="7" rx="2"/><path d="M17.5 13v7M14 16.5h7"/></svg>
+          </span>
+          <h3>两个 App，各管一段</h3>
+          <p><b>Go2Claude</b> 管设置与自检；<b>Go2Claude Toolbar</b> 只有一件事——在 Finder 里被点一下。</p>
+          <ul>
+            <li>拖进工具栏即可，随时可移除</li>
+            <li>不常驻菜单栏、不占 Dock</li>
+            <li>点完即退出，只留下 Terminal</li>
+          </ul>
+        </article>
+
+        <article class="card">
+          <span class="f-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24"><path d="M12 3 4 6v6c0 5 3.4 8.3 8 9 4.6-.7 8-4 8-9V6z"/><path d="m9 12 2 2 4-4"/></svg>
+          </span>
+          <h3>先体检，再开跑</h3>
+          <p>首次启动会检测 <code class="inline">claude</code> 是否在当前 shell 可用；缺失时弹安装指引，设置页也持续提示。</p>
+          <ul>
+            <li>未签名安装包附带放行说明</li>
+            <li>自动化权限缺失时给出排查路径</li>
+            <li>失败不会静默，错误可回看</li>
+          </ul>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== 工作方式 ===== -->
+  <section class="section band" id="flow">
+    <div class="wrap">
+      <div class="section-head">
+        <span class="kicker">How it works</span>
+        <h2>一次点击，四步走完</h2>
+        <p>按钮不接管你的工作流，只把该在哪个目录启动这件事替你做掉。</p>
+      </div>
+
+      <div class="flow-grid">
+        <div class="step">
+          <span class="n">01</span>
+          <h3>你在 Finder 里</h3>
+          <p>打开任意文件夹窗口，切到要干活的项目目录。</p>
+          <div class="tagline">Finder front window</div>
+        </div>
+        <div class="step">
+          <span class="n">02</span>
+          <h3>点一下工具栏按钮</h3>
+          <p>Go2Claude Toolbar 被点中，随即启动一次启动流程。</p>
+          <div class="tagline">Toolbar helper</div>
+        </div>
+        <div class="step">
+          <span class="n">03</span>
+          <h3>读取并渲染 %PATH%</h3>
+          <p>取当前窗口路径，替换进命令模板，做 shell 转义。</p>
+          <div class="tagline">CommandTemplateRenderer</div>
+        </div>
+        <div class="step">
+          <span class="n">04</span>
+          <h3>交给 Terminal</h3>
+          <p>新窗口执行命令，Claude 已在项目目录里待命。</p>
+          <div class="tagline">TerminalLauncher</div>
+        </div>
+      </div>
+
+      <div class="terminal" aria-label="命令模板示例">
+        <div class="bar">
+          <span class="dot r"></span><span class="dot y"></span><span class="dot g"></span>
+          <span>Terminal — 由 Go2Claude 启动</span>
+          <button class="copy-btn" type="button" data-copy="cd %PATH% &amp;&amp; claude --dangerously-skip-permissions">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h9"/></svg>
+            复制
+          </button>
+        </div>
+<pre><span class="c-dim"># 你在 Finder 打开的目录</span>
+<span class="c-teal">~/Work/go2claude</span> <span class="c-dim">$</span> cd ~/Work/go2claude &amp;&amp; claude --dangerously-skip-permissions
+<span class="c-blue">Claude Code</span> <span class="c-dim">v2 · 权限确认已跳过</span>
+<span class="c-violet">&gt;</span> 现在可以开始提问了<span class="c-dim">_</span></pre>
+      </div>
+
+      <p class="flow-note">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 8h.01M11 12h1v4h1"/></svg>
+        按钮点完就退出，不常驻、不监听文件、不上传任何内容。
+      </p>
+    </div>
+  </section>
+
+  <!-- ===== 安装到 Finder ===== -->
+  <section class="section" id="start">
+    <div class="wrap">
+      <div class="section-head">
+        <span class="kicker">Setup</span>
+        <h2>三步装进 Finder 工具栏</h2>
+        <p>安装包不到 1 MB，不含安装脚本、不含后台服务。</p>
+      </div>
+
+      <div class="start-grid">
+        <div class="steps">
+          <div class="ostep">
+            <span class="big">1</span>
+            <div>
+              <h3>安装</h3>
+              <p>双击 <code>.pkg</code> 按提示完成；或解压 zip，把两个 <code>.app</code> 拖进「应用程序」。</p>
+              <span class="cmd">Go2Claude.pkg</span>
+            </div>
+          </div>
+          <div class="ostep">
+            <span class="big">2</span>
+            <div>
+              <h3>打开一次主程序</h3>
+              <p>确认命令模板，点「查看如何添加到 Finder 工具栏」看具体操作。</p>
+              <span class="cmd">open -a Go2Claude</span>
+            </div>
+          </div>
+          <div class="ostep">
+            <span class="big">3</span>
+            <div>
+              <h3>拖进工具栏</h3>
+              <p>按住 ⌘ 把 <b>Go2Claude Toolbar.app</b> 拖到 Finder 工具栏，松手即可。</p>
+              <span class="cmd">⌘ + drag → Finder toolbar</span>
+            </div>
+          </div>
+        </div>
+
+        <aside class="callout">
+          <h3><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 4 6v6c0 5 3.4 8.3 8 9 4.6-.7 8-4 8-9V6z"/><path d="m9 12 2 2 4-4"/></svg>首次点击会申请权限</h3>
+          <p>macOS 会请求「自动化」权限（Finder 与 Terminal），允许后按钮才会生效。这是系统行为，不是应用在后台做事。</p>
+          <div class="kv">
+            <div><span>系统要求</span><b>macOS 13.0+</b></div>
+            <div><span>芯片支持</span><b>Apple 芯片 + Intel</b></div>
+            <div><span>需要前置</span><b>已安装 Claude CLI</b></div>
+            <div><span>开源许可</span><b>MIT</b></div>
+            <div><span>数据外传</span><b>无网络请求</b></div>
+          </div>
+        </aside>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== 下载 ===== -->
+  <section class="section dark" id="download">
+    <div class="wrap">
+      <div class="section-head">
+        <span class="kicker">Download</span>
+        <h2>下载 Go2Claude v1.2.3</h2>
+        <p>两个 App 都在包里，体积都在 1 MB 以内，任选一种即可。</p>
+      </div>
+
+      <div class="dl-grid">
+        <article class="dl">
+          <span class="kind">推荐 · .pkg</span>
+          <h3>macOS 通用安装包</h3>
+          <p>双击安装，两个 App 自动放进「应用程序」。</p>
+          <div class="meta">
+            Go2Claude-macOS-universal-1.2.3-20261119.pkg<br>
+            Apple 芯片 + Intel · 822 KB · macOS 13+
+          </div>
+          <a class="go" href="downloads/Go2Claude-macOS-universal-1.2.3-20261119.pkg" download>
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12m0 0 4-4m-4 4-4-4M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg>
+            下载安装包
+          </a>
+        </article>
+
+        <article class="dl">
+          <span class="kind">.zip</span>
+          <h3>便携压缩包</h3>
+          <p>解压后手动放置，附带一份安装说明。</p>
+          <div class="meta">
+            Go2Claude-macOS-universal-1.2.3-20261119.zip<br>
+            828 KB · 含 Go2Claude.app 与 Toolbar.app
+          </div>
+          <a class="go" href="downloads/Go2Claude-macOS-universal-1.2.3-20261119.zip" download>
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12m0 0 4-4m-4 4-4-4M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg>
+            下载压缩包
+          </a>
+        </article>
+
+        <article class="dl">
+          <span class="kind">Source · MIT</span>
+          <h3>源码仓库</h3>
+          <p>Swift Package，Xcode 直接打开，<code>swift test</code> 可自测。</p>
+          <div class="meta">
+            github.com/andli0626/go2claude<br>
+            Swift 6 · 零第三方依赖
+          </div>
+          <a class="go" href="https://github.com/andli0626/go2claude" rel="noopener">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12m0 0 4-4m-4 4-4-4M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg>
+            在 GitHub 查看
+          </a>
+        </article>
+      </div>
+
+      <p class="notice">
+        <b>未签名说明：</b>当前产物未做代码签名，首次打开可能被 Gatekeeper 拦下。到「系统设置 → 隐私与安全性」，在页面下方点「仍要打开」，再双击一次即可。
+        公司设备、受管终端或含敏感数据的目录，请在安装前自行完成权限与命令审查。
+      </p>
+    </div>
+  </section>
+
+  <!-- ===== 常见问题 ===== -->
+  <section class="section" id="faq">
+    <div class="wrap">
+      <div class="section-head">
+        <span class="kicker">FAQ</span>
+        <h2>常见问题</h2>
+        <p>点开看答案；多数问题与 macOS 权限有关，不在应用本身。</p>
+      </div>
+
+      <div class="faq">
+        <details>
+          <summary>打开时提示「无法验证开发者」怎么办？<span class="plus">+</span></summary>
+          <div class="answer">关闭弹窗，打开「系统设置 → 隐私与安全性」，在页面下方找到与 Go2Claude 相关的提示，点「仍要打开」，然后再次双击安装包或应用。</div>
+        </details>
+        <details>
+          <summary>点了工具栏按钮没有反应？<span class="plus">+</span></summary>
+          <div class="answer">先在「隐私与安全性 → 自动化」里确认 Go2Claude 有 Finder 与 Terminal 权限；再确认主程序至少成功运行过一次。如果按钮指向的是旧版本 App，删除旧按钮后重新把新的 <code>Go2Claude Toolbar.app</code> 拖进工具栏。</div>
+        </details>
+        <details>
+          <summary>提示找不到 claude？<span class="plus">+</span></summary>
+          <div class="answer">在终端执行 <code>which claude</code>，有输出说明已装好；若在应用内仍提示缺失，通常是 shell 环境不同，按弹窗里的官方文档链接重新安装 Claude CLI 后重启应用即可。</div>
+        </details>
+        <details>
+          <summary>可以改成别的命令吗？<span class="plus">+</span></summary>
+          <div class="answer">可以。设置页直接编辑模板，保留 <code>%PATH%</code> 占位符即可。例如只切目录：<code>cd %PATH%</code>；或启动别的 CLI：<code>cd %PATH% &amp;&amp; open -a iTerm</code>。改坏了点「恢复默认」。</div>
+        </details>
+        <details>
+          <summary>Intel Mac 能用吗？<span class="plus">+</span></summary>
+          <div class="answer">可以。打包脚本默认做 arm64 + x86_64 通用构建，最低系统 macOS 13.0。</div>
+        </details>
+        <details>
+          <summary>它会联网或上传我的代码吗？<span class="plus">+</span></summary>
+          <div class="answer">不会。应用只做两件事：读取当前 Finder 目录、在 Terminal 里执行你配置的命令。没有网络请求、没有统计上报、没有后台常驻。</div>
+        </details>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="footer-top">
+      <a class="footer-brand" href="#top">
+        <img src="assets/app-icon-128.png" alt="" width="26" height="26">
+        Go2Claude
+      </a>
+      <div class="footer-links">
+        <a href="#features">功能</a>
+        <a href="#download">下载</a>
+        <a href="#faq">常见问题</a>
+        <a href="https://github.com/andli0626/go2claude" rel="noopener">GitHub</a>
+      </div>
+    </div>
+    <p class="footer-legal">
+      Go2Claude 是非官方第三方效率工具，与 Anthropic、Claude 官方客户端及其关联产品不存在隶属、代理、担保或背书关系；Claude 及相关名称与商标归其权利人所有。
+      当前分发版本未签名，安装与运行可能触发 Gatekeeper、安全验证与自动化权限限制，是否继续使用请自行判断并承担相应风险。
+    </p>
+    <div class="copyright">
+      <span>© 2026 Go2Claude · MIT License</span>
+      <span>v1.2.3 · 页面零外部依赖，同源资源</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+(function(){
+  var header = document.getElementById('siteHeader');
+  var menuBtn = document.getElementById('menuBtn');
+  var onScroll = function(){
+    if (window.scrollY > 24) header.classList.add('is-solid');
+    else header.classList.remove('is-solid');
+  };
+  onScroll();
+  window.addEventListener('scroll', onScroll, {passive:true});
+
+  var nav = document.querySelector('.site-nav');
+  menuBtn.addEventListener('click', function(){
+    var open = nav.classList.toggle('is-open');
+    menuBtn.setAttribute('aria-expanded', open ? 'true' : 'false');
+    // 移动端用简单的下拉层展示导航
+    if (open){
+      nav.style.position = 'absolute';
+      nav.style.top = '100%';
+      nav.style.left = '0';
+      nav.style.right = '0';
+      nav.style.display = 'grid';
+      nav.style.gap = '2px';
+      nav.style.padding = '10px 18px 16px';
+      nav.style.background = header.classList.contains('is-solid') ? 'rgba(255,255,255,.97)' : 'rgba(11,16,32,.97)';
+      nav.style.borderBottom = '1px solid rgba(128,140,170,.25)';
+      nav.style.backdropFilter = 'blur(14px)';
+    } else {
+      nav.style.display = '';
+      nav.removeAttribute('style');
+    }
+  });
+  nav.addEventListener('click', function(e){
+    if (e.target.closest('a') && nav.classList.contains('is-open')) menuBtn.click();
+  });
+
+  // 复制命令模板
+  document.querySelectorAll('[data-copy]').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      var text = btn.getAttribute('data-copy');
+      var done = function(){
+        var old = btn.textContent;
+        btn.textContent = '已复制';
+        setTimeout(function(){ btn.textContent = old; }, 1600);
+      };
+      if (navigator.clipboard && navigator.clipboard.writeText){
+        navigator.clipboard.writeText(text).then(done, done);
+      } else {
+        var ta = document.createElement('textarea');
+        ta.value = text; document.body.appendChild(ta); ta.select();
+        try { document.execCommand('copy'); } catch(e){}
+        document.body.removeChild(ta); done();
+      }
+    });
+  });
+})();
+</script>
+</body>
+</html>
