@@ -454,7 +454,7 @@ details .answer code{background:var(--band);border:1px solid var(--line-soft);bo
     <div class="wrap">
       <div class="hero-inner">
         <div class="hero-copy">
-          <span class="eyebrow"><i></i>macOS 13+ · MIT 开源 · 零外部依赖</span>
+          <span class="eyebrow"><i></i>仅支持 macOS 13+ · MIT 开源 · 零外部依赖</span>
           <h1>在 Finder 里，<br><em>点一下就进 Claude</em></h1>
           <p class="hero-lead">
             Go2Claude 给 Finder 加一个工具栏按钮。点它，就在<strong>当前窗口的目录</strong>里打开 Terminal，
@@ -472,7 +472,7 @@ details .answer code{background:var(--band);border:1px solid var(--line-soft);bo
           </div>
           <div class="hero-chips">
             <span class="chip">默认命令 <code>cd %PATH% &amp;&amp; claude</code></span>
-            <span class="chip">模板可自定义</span>
+            <span class="chip">仅支持 macOS，不支持 Windows</span>
             <span class="chip">点完即退出</span>
           </div>
         </div>
@@ -669,6 +669,7 @@ details .answer code{background:var(--band);border:1px solid var(--line-soft);bo
           <h3><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 4 6v6c0 5 3.4 8.3 8 9 4.6-.7 8-4 8-9V6z"/><path d="m9 12 2 2 4-4"/></svg>首次点击会申请权限</h3>
           <p>macOS 会请求「自动化」权限（Finder 与 Terminal），允许后按钮才会生效。这是系统行为，不是应用在后台做事。</p>
           <div class="kv">
+            <div><span>支持平台</span><b>仅 macOS，不支持 Windows</b></div>
             <div><span>系统要求</span><b>macOS 13.0+</b></div>
             <div><span>芯片支持</span><b>Apple 芯片 + Intel</b></div>
             <div><span>需要前置</span><b>已安装 Claude CLI</b></div>
@@ -686,7 +687,7 @@ details .answer code{background:var(--band);border:1px solid var(--line-soft);bo
       <div class="section-head">
         <span class="kicker">Download</span>
         <h2>下载 Go2Claude v1.2.3</h2>
-        <p>两个 App 都在包里，体积都在 1 MB 以内，任选一种即可。</p>
+        <p>两个 App 都在包里，体积都在 1 MB 以内，任选一种即可。本应用仅支持 macOS，Windows 与 Linux 无法运行。</p>
       </div>
 
       <div class="dl-grid">
@@ -771,6 +772,10 @@ details .answer code{background:var(--band);border:1px solid var(--line-soft);bo
           <div class="answer">可以。打包脚本默认做 arm64 + x86_64 通用构建，最低系统 macOS 13.0。</div>
         </details>
         <details>
+          <summary>Windows 电脑可以用吗？<span class="plus">+</span></summary>
+          <div class="answer">不能。Go2Claude 是 macOS 原生应用：依赖 AppKit / SwiftUI 界面、AppleScript 读取 Finder 路径、Terminal.app 启动命令，这三样在 Windows 上都不存在，.pkg 与 .app 也无法在 Windows 上安装运行。它只支持 Mac，不支持 Windows（也不支持 Linux）。</div>
+        </details>
+        <details>
           <summary>它会联网或上传我的代码吗？<span class="plus">+</span></summary>
           <div class="answer">不会。应用只做两件事：读取当前 Finder 目录、在 Terminal 里执行你配置的命令。没有网络请求、没有统计上报、没有后台常驻。</div>
         </details>
@@ -799,7 +804,7 @@ details .answer code{background:var(--band);border:1px solid var(--line-soft);bo
     </p>
     <div class="copyright">
       <span>© 2026 Go2Claude · MIT License</span>
-      <span>v1.2.3 · 页面零外部依赖，同源资源</span>
+      <span>v1.2.3 · 仅支持 macOS · 页面零外部依赖</span>
     </div>
   </div>
 </footer>
