@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Go2Claude 图标预览</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #1E293B 0%, #0F172A 100%);
+            color: #F8FAFC;
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+        
+        h1 {
+            font-size: 48px;
+            font-weight: 700;
+            margin-bottom: 16px;
+            background: linear-gradient(135deg, #22C55E 0%, #3B82F6 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .subtitle {
+            font-size: 20px;
+            color: #94A3B8;
+            margin-bottom: 8px;
+        }
+        
+        .specs {
+            display: flex;
+            gap: 24px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 24px;
+        }
+        
+        .spec-badge {
+            background: rgba(255,255,255,0.1);
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            color: #CBD5E1;
+        }
+        
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 40px;
+            margin-bottom: 60px;
+        }
+        
+        .card {
+            background: rgba(255,255,255,0.05);
+            border-radius: 16px;
+            padding: 32px;
+            text-align: center;
+            border: 1px solid rgba(255,255,255,0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+            border-color: rgba(34, 197, 94, 0.3);
+        }
+        
+        .card img {
+            border-radius: 12px;
+            margin-bottom: 16px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+        
+        .card-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+        
+        .card-size {
+            font-size: 14px;
+            color: #64748B;
+            margin-bottom: 4px;
+        }
+        
+        .card-use {
+            font-size: 13px;
+            color: #94A3B8;
+        }
+        
+        .color-palette {
+            background: rgba(255,255,255,0.05);
+            border-radius: 16px;
+            padding: 40px;
+            margin-bottom: 60px;
+        }
+        
+        .palette-title {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 32px;
+            text-align: center;
+        }
+        
+        .colors {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 24px;
+        }
+        
+        .color-swatch {
+            border-radius: 12px;
+            overflow: hidden;
+            background: rgba(255,255,255,0.1);
+        }
+        
+        .color-preview {
+            height: 120px;
+            width: 100%;
+        }
+        
+        .color-info {
+            padding: 16px;
+        }
+        
+        .color-name {
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+        
+        .color-hex {
+            font-family: 'SF Mono', Monaco, monospace;
+            font-size: 13px;
+            color: #64748B;
+        }
+        
+        .features {
+            background: rgba(255,255,255,0.05);
+            border-radius: 16px;
+            padding: 40px;
+            margin-bottom: 40px;
+        }
+        
+        .features-title {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 32px;
+            text-align: center;
+        }
+        
+        .feature-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 24px;
+        }
+        
+        .feature {
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+        }
+        
+        .feature-icon {
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(135deg, #22C55E 0%, #3B82F6 100%);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            flex-shrink: 0;
+        }
+        
+        .feature-text {
+            color: #CBD5E1;
+            line-height: 1.6;
+        }
+        
+        .feature-strong {
+            color: #F8FAFC;
+            font-weight: 600;
+        }
+        
+        footer {
+            text-align: center;
+            padding-top: 40px;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            color: #64748B;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Go2Claude</h1>
+            <p class="subtitle">macOS 应用图标设计</p>
+            <div class="specs">
+                <span class="spec-badge">📐 1024×1024px</span>
+                <span class="spec-badge">🎨 PNG-24 with Alpha</span>
+                <span class="spec-badge">⌘ macOS Squircle</span>
+                <span class="spec-badge">🌙 Dark Mode Optimized</span>
+            </div>
+        </header>
+        
+        <section class="grid">
+            <div class="card">
+                <img src="icons/icon_512x512.png" alt="512x512" width="128" height="128">
+                <div class="card-title">标准尺寸</div>
+                <div class="card-size">512×512px</div>
+                <div class="card-use">App Store / Spotlight</div>
+            </div>
+            
+            <div class="card">
+                <img src="icons/icon_256x256.png" alt="256x256" width="64" height="64">
+                <div class="card-title">中等尺寸</div>
+                <div class="card-size">256×256px</div>
+                <div class="card-use">Finder / Dock</div>
+            </div>
+            
+            <div class="card">
+                <img src="icons/icon_128x128.png" alt="128x128" width="64" height="64">
+                <div class="card-title">小尺寸</div>
+                <div class="card-size">128×128px</div>
+                <div class="card-use">工具栏</div>
+            </div>
+            
+            <div class="card">
+                <img src="icons/icon_64x64.png" alt="64x64" width="64" height="64">
+                <div class="card-title">超小尺寸</div>
+                <div class="card-size">64×64px</div>
+                <div class="card-use">紧凑视图</div>
+            </div>
+            
+            <div class="card">
+                <img src="icons/icon_32x32.png" alt="32x32" width="48" height="48">
+                <div class="card-title">Retina @2x</div>
+                <div class="card-size">32×32px (@2x)</div>
+                <div class="card-use">Retina 显示器</div>
+            </div>
+            
+            <div class="card">
+                <img src="icons/icon_16x16.png" alt="16x16" width="32" height="32">
+                <div class="card-title">最小尺寸</div>
+                <div class="card-size">16×16px</div>
+                <div class="card-use">Finder 列表视图</div>
+            </div>
+        </section>
+        
+        <section class="color-palette">
+            <h2 class="palette-title">🎨 配色方案</h2>
+            <div class="colors">
+                <div class="color-swatch">
+                    <div class="color-preview" style="background: #1E293B;"></div>
+                    <div class="color-info">
+                        <div class="color-name">背景主色</div>
+                        <div class="color-hex">#1E293B (slate-800)</div>
+                    </div>
+                </div>
+                
+                <div class="color-swatch">
+                    <div class="color-preview" style="background: #0F172A;"></div>
+                    <div class="color-info">
+                        <div class="color-name">背景暗色</div>
+                        <div class="color-hex">#0F172A (slate-900)</div>
+                    </div>
+                </div>
+                
+                <div class="color-swatch">
+                    <div class="color-preview" style="background: #22C55E;"></div>
+                    <div class="color-info">
+                        <div class="color-name">终端绿</div>
+                        <div class="color-hex">#22C55E (green-500)</div>
+                    </div>
+                </div>
+                
+                <div class="color-swatch">
+                    <div class="color-preview" style="background: #3B82F6;"></div>
+                    <div class="color-info">
+                        <div class="color-name">AI 智能蓝</div>
+                        <div class="color-hex">#3B82F6 (blue-500)</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <section class="features">
+            <h2 class="features-title">✨ 设计特点</h2>
+            <div class="feature-list">
+                <div class="feature">
+                    <div class="feature-icon">⌘</div>
+                    <div class="feature-text">
+                        <span class="feature-strong">macOS Squircle 圆角</span><br>
+                        185.4px 统一圆角半径，符合 macOS Big Sur+ 设计语言
+                    </div>
+                </div>
+                
+                <div class="feature">
+                    <div class="feature-icon">🌈</div>
+                    <div class="feature-text">
+                        <span class="feature-strong">材质分层效果</span><br>
+                        玻璃质感高光 + 边缘光晕，创造深度和立体感
+                    </div>
+                </div>
+                
+                <div class="feature">
+                    <div class="feature-icon">⚡</div>
+                    <div class="feature-text">
+                        <span class="feature-strong">终端 + AI 融合</span><br>
+                        绿色命令提示符 + 蓝色 AI 火花，传达产品定位
+                    </div>
+                </div>
+                
+                <div class="feature">
+                    <div class="feature-icon">🎯</div>
+                    <div class="feature-text">
+                        <span class="feature-strong">多尺寸优化</span><br>
+                        从 16px 到 1024px，所有尺寸下都保持高识别度
+                    </div>
+                </div>
+                
+                <div class="feature">
+                    <div class="feature-icon">🌙</div>
+                    <div class="feature-text">
+                        <span class="feature-strong">暗色模式优先</span><br>
+                        专为开发者工具设计，完美融入 macOS 暗色生态
+                    </div>
+                </div>
+                
+                <div class="feature">
+                    <div class="feature-icon">♿</div>
+                    <div class="feature-text">
+                        <span class="feature-strong">无障碍设计</span><br>
+                        颜色对比度 > 4.5:1，符合 WCAG AA 标准
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <footer>
+            <p>Go2Claude Icon Design v1.0 • Created with SVG + rsvg-convert • 2026-03-22</p>
+            <p style="margin-top: 8px;">Designed by Sisyphus (AI Agent)</p>
+        </footer>
+    </div>
+</body>
+</html>

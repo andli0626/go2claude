@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="1024" height="1024" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <!-- macOS Squircle Shape (185.4px corner radius for 1024px canvas) -->
+    <path id="squircle" d="M 185.4,0 L 838.6,0 C 941.2,0 1024,82.8 1024,185.4 L 1024,838.6 C 1024,941.2 941.2,1024 838.6,1024 L 185.4,1024 C 82.8,1024 0,941.2 0,838.6 L 0,185.4 C 0,82.8 82.8,0 185.4,0 Z"/>
+    
+    <!-- Background Gradient - Deep Code Dark -->
+    <linearGradient id="bgGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#1E293B;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#0F172A;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#1E293B;stop-opacity:1" />
+    </linearGradient>
+    
+    <!-- Radial Glow - AI Intelligence Blue -->
+    <radialGradient id="aiGlow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" style="stop-color:#3B82F6;stop-opacity:0.4" />
+      <stop offset="60%" style="stop-color:#2563EB;stop-opacity:0.15" />
+      <stop offset="100%" style="stop-color:#1E40AF;stop-opacity:0" />
+    </radialGradient>
+    
+    <!-- Terminal Green Glow -->
+    <radialGradient id="terminalGlow" cx="50%" cy="60%" r="40%">
+      <stop offset="0%" style="stop-color:#22C55E;stop-opacity:0.5" />
+      <stop offset="70%" style="stop-color:#16A34A;stop-opacity:0.2" />
+      <stop offset="100%" style="stop-color:#15803D;stop-opacity:0" />
+    </radialGradient>
+    
+    <!-- Glass Material Effect -->
+    <linearGradient id="glassHighlight" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#FFFFFF;stop-opacity:0.15" />
+      <stop offset="30%" style="stop-color:#FFFFFF;stop-opacity:0.05" />
+      <stop offset="100%" style="stop-color:#FFFFFF;stop-opacity:0" />
+    </linearGradient>
+    
+    <!-- Edge Highlight -->
+    <linearGradient id="edgeHighlight" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#FFFFFF;stop-opacity:0.2" />
+      <stop offset="50%" style="stop-color:#FFFFFF;stop-opacity:0" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Layer 1: Background (Squircle with dark gradient) -->
+  <use href="#squircle" fill="url(#bgGradient)"/>
+  
+  <!-- Layer 2: AI Glow Effect (Blue intelligence aura) -->
+  <use href="#squircle" fill="url(#aiGlow)"/>
+  
+  <!-- Layer 3: Terminal Green Glow (Command execution) -->
+  <circle cx="512" cy="614" r="200" fill="url(#terminalGlow)"/>
+  
+  <!-- Layer 4: Terminal Prompt Symbol (>_) -->
+  <g transform="translate(512, 512)">
+    <!-- Chevron/Arrow symbol -->
+    <path d="M -120,-40 L -40,40 L -20,20 L -80,-40 L 100,-40 L 100,-80 L -100,-80 Z" 
+          fill="#22C55E" 
+          opacity="0.95"/>
+    
+    <!-- Underscore cursor -->
+    <rect x="-100" y="60" width="120" height="16" rx="4" fill="#22C55E" opacity="0.9"/>
+    
+    <!-- Sparkle/AI accent (top-right) -->
+    <g transform="translate(80, -120)">
+      <path d="M 0,-20 L 4,8 L 12,12 L 4,16 L 0,24 L -4,16 L -12,12 L -4,8 Z" 
+            fill="#3B82F6" 
+            opacity="0.9"/>
+      <circle cx="0" cy="0" r="3" fill="#60A5FA" opacity="0.8"/>
+    </g>
+  </g>
+  
+  <!-- Layer 5: Glass Material Highlight (top-left to bottom-right) -->
+  <use href="#squircle" fill="url(#glassHighlight)"/>
+  
+  <!-- Layer 6: Edge Highlight (top-left corner) -->
+  <path d="M 0,185.4 C 0,82.8 82.8,0 185.4,0 L 400,0 C 280,0 180,100 180,220 L 0,220 Z" 
+        fill="url(#edgeHighlight)"/>
+  
+  <!-- Layer 7: Inner Border (subtle depth) -->
+  <path d="M 185.4,40 L 838.6,40 C 919,40 984,105 984,185.4 L 984,838.6 C 984,919 919,984 838.6,984 L 185.4,984 C 105,984 40,919 40,838.6 L 40,185.4 C 40,105 105,40 185.4,40 Z" 
+        stroke="#FFFFFF" 
+        stroke-width="1" 
+        stroke-opacity="0.08" 
+        fill="none"/>
+  
+  <!-- Layer 8: Subtle Noise Texture (for material realism) -->
+  <use href="#squircle" fill="#FFFFFF" fill-opacity="0.02" style="filter: url(#noise)"/>
+</svg>

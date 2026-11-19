@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="1024" height="1024" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <!-- macOS Squircle Shape -->
+    <path id="squircle" d="M 185.4,0 L 838.6,0 C 941.2,0 1024,82.8 1024,185.4 L 1024,838.6 C 1024,941.2 941.2,1024 838.6,1024 L 185.4,1024 C 82.8,1024 0,941.2 0,838.6 L 0,185.4 C 0,82.8 82.8,0 185.4,0 Z"/>
+    
+    <!-- Background - Very Dark Blue/Purple -->
+    <linearGradient id="bgGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#1a1b2e;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#0f1020;stop-opacity:1" />
+    </linearGradient>
+    
+    <!-- G2C Gradient: Green-Blue to Blue to Purple -->
+    <linearGradient id="g2cGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#10b981;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#3b82f6;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#8b5cf6;stop-opacity:1" />
+    </linearGradient>
+    
+    <!-- Bottom Line Gradient -->
+    <linearGradient id="lineGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#10b981;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#34d399;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Layer 1: Background -->
+  <use href="#squircle" fill="url(#bgGradient)"/>
+  
+  <!-- Layer 2: Corner Dots -->
+  <!-- Top-Left: Blue -->
+  <circle cx="256" cy="256" r="25" fill="#3b82f6" opacity="0.9"/>
+  
+  <!-- Top-Right: Purple -->
+  <circle cx="768" cy="256" r="25" fill="#8b5cf6" opacity="0.9"/>
+  
+  <!-- Bottom-Center: Green -->
+  <circle cx="512" cy="820" r="20" fill="#10b981" opacity="0.9"/>
+  
+  <!-- Layer 3: G2C Letters -->
+  <g transform="translate(512, 520)">
+    <!-- G Letter -->
+    <path d="M -220,-100 L -220,100 C -220,160 -170,210 -110,210 L -20,210 C 30,210 70,180 80,140 L 80,100 L 0,100 L 0,130 C 0,150 -20,170 -50,170 C -90,170 -130,140 -130,100 L -130,-80 C -130,-130 -90,-170 -30,-170 L 20,-170 C 50,-170 70,-150 70,-120 L 70,-140 C 70,-190 30,-230 -30,-230 L -130,-230 C -190,-230 -240,-190 -240,-130 Z" 
+          fill="url(#g2cGradient)" opacity="0.95"/>
+    
+    <!-- 2 Letter -->
+    <path d="M -80,-230 L 60,-230 C 140,-230 210,-170 210,-100 L 210,-20 C 210,60 140,130 60,130 L -80,210 L -80,230 L 280,230 L 280,140 L 10,140 L 10,130 C 10,90 30,70 70,70 L 110,70 C 170,70 220,20 220,-40 L 220,-100 C 220,-170 160,-230 90,-230 L -80,-230 Z" 
+          fill="url(#g2cGradient)" opacity="0.95"/>
+    
+    <!-- C Letter -->
+    <path d="M 340,-230 L 480,-230 C 570,-230 650,-160 650,-70 L 650,70 C 650,170 570,230 480,230 L 340,230 C 250,230 170,170 170,70 L 170,-70 C 170,-160 250,-230 340,-230 Z M 250,70 C 250,130 300,180 360,180 L 460,180 C 520,180 570,130 570,70 L 570,-70 C 570,-130 520,-180 460,-180 L 360,-180 C 300,-180 250,-130 250,-70 L 250,70 Z" 
+          fill="url(#g2cGradient)" opacity="0.95"/>
+  </g>
+  
+  <!-- Layer 4: Bottom Green Line -->
+  <rect x="280" y="640" width="464" height="12" rx="6" fill="url(#lineGradient)" opacity="0.95"/>
+  
+</svg>

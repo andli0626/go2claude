@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="1024" height="1024" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <!-- Squircle -->
+    <path id="squircle" d="M 185.4,0 L 838.6,0 C 941.2,0 1024,82.8 1024,185.4 L 1024,838.6 C 1024,941.2 941.2,1024 838.6,1024 L 185.4,1024 C 82.8,1024 0,941.2 0,838.6 L 0,185.4 C 0,82.8 82.8,0 185.4,0 Z"/>
+    
+    <!-- Background -->
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1a1b2e"/>
+      <stop offset="100%" stop-color="#0f1020"/>
+    </linearGradient>
+    
+    <!-- G2C Gradient -->
+    <linearGradient id="textGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#10b981"/>
+      <stop offset="45%" stop-color="#3b82f6"/>
+      <stop offset="100%" stop-color="#8b5cf6"/>
+    </linearGradient>
+    
+    <!-- Line Gradient -->
+    <linearGradient id="lineGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#10b981"/>
+      <stop offset="100%" stop-color="#34d399"/>
+    </linearGradient>
+    
+    <!-- G Letter Path -->
+    <path id="letterG" d="M -200,-120 L -200,120 C -200,200 -130,260 -50,260 L 40,260 C 110,260 150,220 150,160 L 150,100 L 50,100 L 50,140 C 50,170 20,200 -30,200 C -90,200 -140,150 -140,90 L -140,-90 C -140,-150 -90,-200 -30,-200 L 40,-200 C 80,-200 110,-170 110,-130 L 110,-160 C 110,-230 60,-280 -20,-280 L -120,-280 C -200,-280 -270,-220 -270,-140 Z"/>
+    
+    <!-- 2 Letter Path -->
+    <path id="letter2" d="M -60,-280 L 90,-280 C 190,-280 280,-200 280,-100 L 280,0 C 280,110 180,200 70,200 L -60,280 L -60,300 L 360,300 L 360,180 L 80,180 L 80,170 C 80,120 110,90 160,90 L 210,90 C 280,90 350,30 350,-60 L 350,-100 C 350,-200 260,-280 160,-280 L -60,-280 Z"/>
+    
+    <!-- C Letter Path -->
+    <path id="letterC" d="M 420,-280 L 580,-280 C 700,-280 810,-190 810,-70 L 810,70 C 810,200 700,280 580,280 L 420,280 C 300,280 190,200 190,70 L 190,-70 C 190,-190 300,-280 420,-280 Z M 290,70 C 290,150 360,210 450,210 L 550,210 C 640,210 710,150 710,70 L 710,-70 C 710,-150 640,-210 550,-210 L 450,-210 C 360,-210 290,-150 290,-70 L 290,70 Z"/>
+  </defs>
+  
+  <!-- Background -->
+  <use href="#squircle" fill="url(#bgGrad)"/>
+  
+  <!-- Dots -->
+  <circle cx="256" cy="256" r="30" fill="#3b82f6"/>
+  <circle cx="768" cy="256" r="30" fill="#8b5cf6"/>
+  <circle cx="512" cy="820" r="24" fill="#10b981"/>
+  
+  <!-- G2C Letters -->
+  <g transform="translate(512, 560)" fill="url(#textGrad)">
+    <use href="#letterG" transform="translate(-280, 0)"/>
+    <use href="#letter2" transform="translate(-20, 0)"/>
+    <use href="#letterC" transform="translate(240, 0)"/>
+  </g>
+  
+  <!-- Bottom Line -->
+  <rect x="280" y="640" width="464" height="16" rx="8" fill="url(#lineGrad)"/>
+</svg>

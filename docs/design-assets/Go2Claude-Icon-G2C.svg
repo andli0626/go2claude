@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="1024" height="1024" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <!-- macOS Squircle Shape -->
+    <path id="squircle" d="M 185.4,0 L 838.6,0 C 941.2,0 1024,82.8 1024,185.4 L 1024,838.6 C 1024,941.2 941.2,1024 838.6,1024 L 185.4,1024 C 82.8,1024 0,941.2 0,838.6 L 0,185.4 C 0,82.8 82.8,0 185.4,0 Z"/>
+    
+    <!-- Background Gradient - Deep Code Dark -->
+    <linearGradient id="bgGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#1E293B;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#0F172A;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#1E293B;stop-opacity:1" />
+    </linearGradient>
+    
+    <!-- Radial Glow - AI Intelligence Blue -->
+    <radialGradient id="aiGlow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" style="stop-color:#3B82F6;stop-opacity:0.35" />
+      <stop offset="60%" style="stop-color:#2563EB;stop-opacity:0.12" />
+      <stop offset="100%" style="stop-color:#1E40AF;stop-opacity:0" />
+    </radialGradient>
+    
+    <!-- Terminal Green Glow -->
+    <radialGradient id="terminalGlow" cx="50%" cy="60%" r="45%">
+      <stop offset="0%" style="stop-color:#22C55E;stop-opacity:0.45" />
+      <stop offset="70%" style="stop-color:#16A34A;stop-opacity:0.18" />
+      <stop offset="100%" style="stop-color:#15803D;stop-opacity:0" />
+    </radialGradient>
+    
+    <!-- Glass Material Effect -->
+    <linearGradient id="glassHighlight" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#FFFFFF;stop-opacity:0.15" />
+      <stop offset="30%" style="stop-color:#FFFFFF;stop-opacity:0.05" />
+      <stop offset="100%" style="stop-color:#FFFFFF;stop-opacity:0" />
+    </linearGradient>
+    
+    <!-- Edge Highlight -->
+    <linearGradient id="edgeHighlight" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#FFFFFF;stop-opacity:0.2" />
+      <stop offset="50%" style="stop-color:#FFFFFF;stop-opacity:0" />
+    </linearGradient>
+    
+    <!-- G2C Gradient Text -->
+    <linearGradient id="g2cGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#22C55E;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#3B82F6;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#8B5CF6;stop-opacity:1" />
+    </linearGradient>
+    
+    <!-- G2C Glow Filter -->
+    <filter id="g2cGlow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="8" result="blur"/>
+      <feFlood flood-color="#22C55E" flood-opacity="0.6" result="glowColor"/>
+      <feComposite in="glowColor" in2="blur" operator="in" result="softGlow"/>
+      <feMerge>
+        <feMergeNode in="softGlow"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+  
+  <!-- Layer 1: Background (Squircle with dark gradient) -->
+  <use href="#squircle" fill="url(#bgGradient)"/>
+  
+  <!-- Layer 2: AI Glow Effect (Blue intelligence aura) -->
+  <use href="#squircle" fill="url(#aiGlow)"/>
+  
+  <!-- Layer 3: Terminal Green Glow -->
+  <circle cx="512" cy="614" r="220" fill="url(#terminalGlow)"/>
+  
+  <!-- Layer 4: G2C Typography (Central Focus) -->
+  <g transform="translate(512, 512)" filter="url(#g2cGlow)">
+    <!-- G Letter -->
+    <path d="M -180,-80 L -180,80 C -180,120 -140,160 -100,160 L -40,160 C 0,160 40,120 40,80 L 40,40 L -40,40 L -40,60 C -40,80 -60,100 -80,100 C -100,100 -120,80 -120,60 L -120,-60 C -120,-80 -100,-100 -80,-100 L -20,-100 C 0,-100 20,-80 20,-60 L 20,-80 L 100,-80 C 100,-120 60,-160 20,-160 L -100,-160 C -140,-160 -180,-120 -180,-80 Z" 
+          fill="url(#g2cGradient)" opacity="0.95"/>
+    
+    <!-- 2 Letter (Middle) -->
+    <path d="M 40,-160 L 120,-160 C 160,-160 200,-120 200,-80 L 200,-40 C 200,0 160,40 120,40 L 40,80 L 40,160 L 280,160 L 280,100 L 100,100 L 100,80 C 100,60 120,40 140,40 L 160,40 C 200,40 240,0 240,-40 L 240,-80 C 240,-120 200,-160 160,-160 L 40,-160 Z" 
+          fill="url(#g2cGradient)" opacity="0.95"/>
+    
+    <!-- C Letter (Right) -->
+    <path d="M 320,-160 L 400,-160 C 440,-160 480,-120 480,-80 L 480,80 C 480,120 440,160 400,160 L 320,160 C 280,160 240,120 240,80 L 240,-80 C 240,-120 280,-160 320,-160 Z M 300,80 C 300,100 320,120 340,120 L 380,120 C 400,120 420,100 420,80 L 420,-80 C 420,-100 400,-120 380,-120 L 340,-120 C 320,-120 300,-100 300,-80 L 300,80 Z" 
+          fill="url(#g2cGradient)" opacity="0.95"/>
+  </g>
+  
+  <!-- Layer 5: Terminal Prompt Symbol (Subtle, below G2C) -->
+  <g transform="translate(512, 680)" opacity="0.6">
+    <!-- Underscore cursor -->
+    <rect x="-120" y="0" width="240" height="12" rx="6" fill="#22C55E" opacity="0.8"/>
+  </g>
+  
+  <!-- Layer 6: AI Sparkles (around G2C) -->
+  <g transform="translate(512, 512)">
+    <!-- Top-left sparkle -->
+    <g transform="translate(-280, -200)">
+      <path d="M 0,-16 L 3,6 L 9,9 L 3,12 L 0,20 L -3,12 L -9,9 L -3,6 Z" 
+            fill="#3B82F6" opacity="0.8"/>
+    </g>
+    
+    <!-- Top-right sparkle -->
+    <g transform="translate(280, -200)">
+      <path d="M 0,-16 L 3,6 L 9,9 L 3,12 L 0,20 L -3,12 L -9,9 L -3,6 Z" 
+            fill="#8B5CF6" opacity="0.8"/>
+    </g>
+    
+    <!-- Bottom sparkle -->
+    <g transform="translate(0, 280)">
+      <path d="M 0,-12 L 2,4 L 6,6 L 2,8 L 0,14 L -2,8 L -6,6 L -2,4 Z" 
+            fill="#22C55E" opacity="0.7"/>
+    </g>
+  </g>
+  
+  <!-- Layer 7: Glass Material Highlight -->
+  <use href="#squircle" fill="url(#glassHighlight)"/>
+  
+  <!-- Layer 8: Edge Highlight -->
+  <path d="M 0,185.4 C 0,82.8 82.8,0 185.4,0 L 400,0 C 280,0 180,100 180,220 L 0,220 Z" 
+        fill="url(#edgeHighlight)"/>
+  
+  <!-- Layer 9: Inner Border -->
+  <path d="M 185.4,40 L 838.6,40 C 919,40 984,105 984,185.4 L 984,838.6 C 984,919 919,984 838.6,984 L 185.4,984 C 105,984 40,919 40,838.6 L 40,185.4 C 40,105 105,40 185.4,40 Z" 
+        stroke="#FFFFFF" 
+        stroke-width="1" 
+        stroke-opacity="0.08" 
+        fill="none"/>
+</svg>

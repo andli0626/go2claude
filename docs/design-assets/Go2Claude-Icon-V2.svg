@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="1024" height="1024" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <!-- Background - Very Dark Blue -->
+    <rect id="bg" x="0" y="0" width="1024" height="1024" fill="#1a1b2e"/>
+    
+    <!-- G2C Gradient -->
+    <linearGradient id="g2cGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#10b981"/>
+      <stop offset="50%" stop-color="#3b82f6"/>
+      <stop offset="100%" stop-color="#8b5cf6"/>
+    </linearGradient>
+    
+    <!-- Line Gradient -->
+    <linearGradient id="lineGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#10b981"/>
+      <stop offset="100%" stop-color="#34d399"/>
+    </linearGradient>
+    
+    <!-- Squircle Clip -->
+    <clipPath id="squircleClip">
+      <path d="M 185.4,0 L 838.6,0 C 941.2,0 1024,82.8 1024,185.4 L 1024,838.6 C 1024,941.2 941.2,1024 838.6,1024 L 185.4,1024 C 82.8,1024 0,941.2 0,838.6 L 0,185.4 C 0,82.8 82.8,0 185.4,0 Z"/>
+    </clipPath>
+  </defs>
+  
+  <!-- Background with Squircle Clip -->
+  <g clip-path="url(#squircleClip)">
+    <use href="#bg"/>
+    
+    <!-- Corner Dots -->
+    <circle cx="256" cy="256" r="28" fill="#3b82f6"/>
+    <circle cx="768" cy="256" r="28" fill="#8b5cf6"/>
+    <circle cx="512" cy="820" r="22" fill="#10b981"/>
+    
+    <!-- G2C Text -->
+    <text x="512" y="560" 
+          font-family="Arial Black, Arial, sans-serif" 
+          font-size="280" 
+          font-weight="900"
+          fill="url(#g2cGrad)"
+          text-anchor="middle"
+          dominant-baseline="middle">
+      G2C
+    </text>
+    
+    <!-- Bottom Line -->
+    <rect x="280" y="640" width="464" height="14" rx="7" fill="url(#lineGrad)"/>
+  </g>
+</svg>

@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="1024" height="1024" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <!-- macOS Squircle Shape -->
+    <path id="squircle" d="M 185.4,0 L 838.6,0 C 941.2,0 1024,82.8 1024,185.4 L 1024,838.6 C 1024,941.2 941.2,1024 838.6,1024 L 185.4,1024 C 82.8,1024 0,941.2 0,838.6 L 0,185.4 C 0,82.8 82.8,0 185.4,0 Z"/>
+    
+    <!-- Background - Dark Blue Gradient -->
+    <linearGradient id="bgGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#1e1e3f;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#0a0a14;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#1a1a2e;stop-opacity:1" />
+    </linearGradient>
+    
+    <!-- C2G Gradient: Cyan → Blue → Purple -->
+    <linearGradient id="c2gGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#00f0ff;stop-opacity:1" />
+      <stop offset="35%" style="stop-color:#0066ff;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#a855f7;stop-opacity:1" />
+    </linearGradient>
+    
+    <!-- Glow Effect -->
+    <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="10" result="blur"/>
+      <feFlood flood-color="#00f0ff" flood-opacity="0.35" result="glowColor"/>
+      <feComposite in="glowColor" in2="blur" operator="in" result="softGlow"/>
+      <feMerge>
+        <feMergeNode in="softGlow"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+  
+  <!-- Layer 1: Background -->
+  <use href="#squircle" fill="url(#bgGradient)"/>
+  
+  <!-- Layer 2: Center Glow -->
+  <ellipse cx="512" cy="512" rx="380" ry="380" fill="rgba(0,240,255,0.06)"/>
+  
+  <!-- Layer 3: C2G Letters -->
+  <g transform="translate(512, 540)" filter="url(#glow)">
+    <!-- C Letter -->
+    <path d="M -280,-120 L -180,-120 C -150,-120 -120,-90 -120,-50 L -120,50 C -120,90 -150,120 -180,120 L -280,120 C -320,120 -360,90 -360,50 L -360,-50 C -360,-90 -320,-120 -280,-120 Z M -290,50 L -240,50 C -230,50 -220,40 -220,20 L -220,-20 C -220,-40 -230,-50 -240,-50 L -290,-50 C -300,-50 -310,-40 -310,-20 L -310,20 C -310,40 -300,50 -290,50 Z" 
+          fill="url(#c2gGradient)" opacity="0.95"/>
+    
+    <!-- 2 Letter -->
+    <path d="M -100,-120 L 20,-120 C 80,-120 140,-70 140,-10 L 140,30 C 140,90 80,140 20,140 L -100,140 L -100,80 L 30,80 C 60,80 80,60 80,20 L 80,-10 C 80,-50 60,-70 20,-70 L -40,-70 L -40,140 L -100,140 L -100,-120 Z" 
+          fill="url(#c2gGradient)" opacity="0.95"/>
+    
+    <!-- G Letter -->
+    <path d="M 180,-120 L 280,-120 C 330,-120 380,-80 380,-20 L 380,80 C 380,110 360,130 330,130 L 280,130 C 250,130 230,110 230,80 L 230,50 C 230,20 250,0 280,0 L 320,0 L 320,-20 C 320,-50 300,-70 270,-70 L 230,-70 L 230,-120 L 180,-120 Z M 280,130 L 340,130 C 370,130 390,110 390,80 L 390,-20 C 390,-50 370,-70 340,-70 L 280,-70 C 250,-70 230,-50 230,-20 L 230,20 L 290,20 C 280,20 270,30 270,50 L 270,80 C 270,110 250,130 280,130 Z" 
+          fill="url(#c2gGradient)" opacity="0.95"/>
+  </g>
+  
+  <!-- Layer 4: Sparkles -->
+  <g opacity="0.7">
+    <circle cx="290" cy="290" r="3" fill="#00f0ff"/>
+    <circle cx="730" cy="290" r="2.5" fill="#a855f7"/>
+    <circle cx="512" cy="760" r="2" fill="#00f0ff"/>
+  </g>
+  
+  <!-- Layer 5: Subtle Highlight -->
+  <ellipse cx="380" cy="360" rx="140" ry="70" fill="rgba(255,255,255,0.04)" transform="rotate(-25 380 360)"/>
+</svg>

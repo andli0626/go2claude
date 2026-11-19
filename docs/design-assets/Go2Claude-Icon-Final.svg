@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="1024" height="1024" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <path id="squircle" d="M 185.4,0 L 838.6,0 C 941.2,0 1024,82.8 1024,185.4 L 1024,838.6 C 1024,941.2 941.2,1024 838.6,1024 L 185.4,1024 C 82.8,1024 0,941.2 0,838.6 L 0,185.4 C 0,82.8 82.8,0 185.4,0 Z"/>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1a1b2e"/>
+      <stop offset="100%" stop-color="#0f1020"/>
+    </linearGradient>
+    <linearGradient id="textGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#10b981"/>
+      <stop offset="45%" stop-color="#3b82f6"/>
+      <stop offset="100%" stop-color="#8b5cf6"/>
+    </linearGradient>
+    <linearGradient id="lineGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#10b981"/>
+      <stop offset="100%" stop-color="#34d399"/>
+    </linearGradient>
+    <style><![CDATA[
+      .g2c { font-family: Arial Black, Arial, sans-serif; font-size: 260px; font-weight: 900; fill: url(#textGrad); text-anchor: middle; }
+    ]]></style>
+  </defs>
+  <use href="#squircle" fill="url(#bgGrad)"/>
+  <circle cx="256" cy="256" r="30" fill="#3b82f6"/>
+  <circle cx="768" cy="256" r="30" fill="#8b5cf6"/>
+  <circle cx="512" cy="820" r="24" fill="#10b981"/>
+  <text x="512" y="560" class="g2c">G2C</text>
+  <rect x="280" y="640" width="464" height="16" rx="8" fill="url(#lineGrad)"/>
+</svg>
